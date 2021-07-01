@@ -16,13 +16,13 @@ from kde_plus_gmm import kde_plus_gmm
 # --------------------------------
 # ------ Read data from file ------
 path = '/gpfs/fs0/scratch/j/jphickey/jphickey/Boundary_Layer_PNAS_2017/'
-testing_file = '/gpfs/fs0/scratch/j/jphickey/g2malik/working_code/temporal_coherence/No_UMZs.dat' # temporary file for debugging
+testing_file = '/gpfs/fs0/scratch/j/jphickey/g2malik/working_code/temporal_coherence/No_UMZs2.dat' # temporary file for debugging
 t = open(testing_file, "w")
 total_snaps = 0
 coherent_snaps = 0
 start_t = 0
-for xx in range(5):
-    for zz in range(1,513,10):    
+for xx in range(2,3):
+    for zz in range(1,513,50):    
         t.write("t:%d "%(start_t))
         t.write("z:%d "%(zz))
         t.write("x:%d"%(xx+1))
@@ -141,6 +141,8 @@ for xx in range(5):
                 coherent_snaps+=1
             t.write("%d "%(model.N_best))
             t.write("%.7f"%(np.mean(model.cov_g)))
+            for mean in model.means_g:
+                t.write(" %.3f"%(mean))
             t.write("\n")
             total_snaps += 1
 
