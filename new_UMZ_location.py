@@ -23,7 +23,7 @@ def find_nearest(array, value):
 
 fname = r'''C:\Users\gagan\Documents\Work\Results\Temporal Coherence\cumulative_peaks_mean.txt'''
 f = open (fname, mode = 'r')
-tol = 0.025
+tol = 0.02
 wall = 0
 middle1 = 0
 middle2 = 0

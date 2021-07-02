@@ -12,7 +12,7 @@ import matplotlib as mpl
 from num2words import num2words
 # --------------------------------
 
-fname = r'''C:\Users\gagan\Documents\Work\Results\Temporal Coherence\cumulative_no_UMZ.txt'''
+fname = r'''C:\Users\gagan\Documents\Work\Results\Temporal Coherence\cumulative_no_UMZ_new.txt'''
 f = open (fname, mode = 'r')
 one = []
 two = []
