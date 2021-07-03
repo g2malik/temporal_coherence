@@ -75,8 +75,8 @@ for line in f:
         peaks_old = peaks_current.copy()
         peaks_current = []
 
-print(wall)
-print(middle1)
-print(middle2)
-print(freestream)
+print("# of UMZs created near wall: ", wall)
+print("# of UMZs created at middle: ",middle1)
+print("# of UMZs created at middle: ",middle2)
+print("# of UMZs created near freastream: ",freestream)
 print(random)
