@@ -51,8 +51,8 @@ for line in f:
                 nearest_old_peaks.append(find_nearest(peaks_old, peaks_current[j])[1])
                 if np.abs(peaks_current[j] - nearest_old_peaks[j])> tol: #doesnt include new peaks that are close to old ones
                     new_peaks.append(j)
-            if len(new_peaks)<1:
-                new_peaks.append(np.abs(np.asarray(peaks_current) - np.asarray(nearest_old_peaks)).argmax()) #includes new close peaks
+            #if len(new_peaks)<1:
+                #new_peaks.append(np.abs(np.asarray(peaks_current) - np.asarray(nearest_old_peaks)).argmax()) #includes new close peaks
             
             #print(new_peaks)
             if len(new_peaks)==1:
