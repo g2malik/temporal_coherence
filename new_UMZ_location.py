@@ -1,5 +1,5 @@
 # --- 
-# aims: reads data on number of UMZs and plots pdf
+# aims: reads data on number of UMZs and calcualtes where the new UMZs are created
 # calls: none
 # modefication history: gmalik, July, 2021; 
 
