@@ -55,8 +55,8 @@ peaks_current = []
 nearest_old_peaks = []
 
 
-counter = np.zeros((7,2))  #(0: first velocity) (1: # of frames)
-tracker = np.array([(0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False)]) #(0: last recorded velocity) (1: if recently changed)
+counter = np.zeros((7,2))  #0: first recorded velocity / 1: # of frames
+tracker = np.array([(0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False)]) #0: last recorded velocity / 1: if recently changed
 
 labels = []
 for line in f:
@@ -65,7 +65,7 @@ for line in f:
         label  = line
 
         for jj in range(np.shape(counter[:,0])[0]): #Check the tracker to find peaks that werent updated
-            if (counter[jj,0] != 0):
+            if (counter[jj,1] > 2): #Adds data with atleast 3 subsequent frames
                 #print("Adding to data")
                 coherent_velocities.append(counter[jj,0])
                 coherent_times.append(counter[jj,1])
@@ -104,22 +104,25 @@ for line in f:
                 
                 else: #If not a coherent peak do nothing?
                     pass
+            
+            #print(counter)
+            #print(coherent_times)
             for jj in range(np.shape(tracker[:,0])[0]): #Check the tracker to find peaks that werent updated
                 if (tracker[jj,1] == False and tracker[jj,0] != 0):
-                    #print("Adding to data")
-                    coherent_velocities.append(counter[jj,0])
-                    coherent_times.append(counter[jj,1])
+                    if counter[jj,1] > 2: #Only add to data if present in atleast 3 frames
+                        #print("Adding to data")
+                        coherent_velocities.append(counter[jj,0])
+                        coherent_times.append(counter[jj,1])
                     counter[jj,:] = 0
                     tracker[jj, 0] = 0
             
-
             tracker[:,1] = False
             
             #if len(new_peaks)<1:
                 #new_peaks.append(np.abs(np.asarray(peaks_current) - np.asarray(nearest_old_peaks)).argmax()) #includes new close peaks
-            
         peaks_old = peaks_current.copy()
         peaks_current = []
+
 print(np.mean(coherent_velocities))
 print(np.mean(coherent_times))
 
