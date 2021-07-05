@@ -9,7 +9,8 @@
 from itertools import count
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl 
+import matplotlib as mpl
+from matplotlib.pyplot import figure 
 from num2words import num2words
 
 # --------------------------------
@@ -22,22 +23,22 @@ def find_nearest(array, value):
 # --------------------------------
 # find index of same value
 def find_tracker(value):
-    idx = np.where(tracker == value)
-    if np.shape(idx) == 1:
+    idx = np.where(tracker[:,0] == value)
+    if np.shape(idx)[1] == 1:
         return idx[0]
-    if np.shape(idx) == 0:
+    if np.shape(idx)[1] == 0:
         return 7 #7 means not present in tracker
-    if np.shape(idx) >1:
+    if np.shape(idx)[1] >1:
         print("tracker error")    
 
 # --------------------------------
 # find next available counter space
 def find_counter_space():
-    for index in range(np.shape(tracker)):
-        if tracker[index] == 0:
+    for index in range(np.shape(tracker[:,0])[0]):
+        if tracker[index,0] == 0:
             return index
-        else:
-            print("no space in counter")
+
+    print("no space in counter")
     
 # --------------------------------
 # main
@@ -46,24 +47,32 @@ fname = r'''C:\Users\gagan\Documents\Work\Results\Temporal Coherence\cumulative_
 f = open (fname, mode = 'r')
 tol = 0.02
 
+coherent_velocities = []
+coherent_times = []
+
 peaks_old = []
 peaks_current = []
+nearest_old_peaks = []
 
-counter = np.array((0,0), (0,0), (0,0), (0,0), (0,0), (0,0), (0,0))  #(0: first velocity) (1: # of frames)
-tracker = np.array([(0,False), (0,False), (0,False), (0,False), (0,False), (0,False), (0,False)]) #(0: last recorded velocity) (1: if recently changed)
+
+counter = np.zeros((7,2))  #(0: first velocity) (1: # of frames)
+tracker = np.array([(0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False), (0.0,False)]) #(0: last recorded velocity) (1: if recently changed)
 
 labels = []
-for i in range(55):
-    line = f.readline()
+for line in f:
+    #line = f.readline()
     if (line.startswith("z") or line.startswith("t"))  == True: # store label and counter and reset everything
         label  = line
-        
-        
-        
+
+        for jj in range(np.shape(counter[:,0])[0]): #Check the tracker to find peaks that werent updated
+            if (counter[jj,0] != 0):
+                #print("Adding to data")
+                coherent_velocities.append(counter[jj,0])
+                coherent_times.append(counter[jj,1])
+        counter[: :] = 0
+        tracker[:, :] = 0  
         
         peaks_old = []
-        counter = np.array([(0,0), (0,0), (0,0), (0,0), (0,0), (0,0), (0,0)])
-        tracker = np.array([(0,False), (0,False), (0,False), (0,False), (0,False), (0,False), (0,False)])
 
     else:
         lst = line.split()
@@ -73,36 +82,49 @@ for i in range(55):
             peaks_current.append(float(lst[ii]))
         nearest_old_peaks = []
 
-        for j in range(len(peaks_current)):
-            nearest_old_peaks.append(find_nearest(peaks_old, peaks_current[j])[1])
-
-            if np.abs(peaks_current[j] - nearest_old_peaks[j])< tol: #If it a coherent peak
-                count_index = find_tracker(nearest_old_peaks[j]) #Checks if already counting
-                if count_index != 7: 
-                    counter[count_index,1] +=1 #Add 1 to the location of counter
-                    tracker[count_index,0] = peaks_current[j] #Put in current velocity in the tracker
-                    tracker[count_index,1] = True
+        if len(peaks_old) != 0:
+            for j in range(len(peaks_current)):
                 
-                elif count_index == 7: #Creates new counter and start counting
-                    new_space = find_counter_space()
-                    counter[new_space,0] = nearest_old_peaks[j]
-                    counter[new_space,1] = 2
-                    tracker[new_space,0] = peaks_current[j]
-                    tracker[new_space,1] = True
+                nearest_old_peaks.append(find_nearest(peaks_old, peaks_current[j])[1])
+
+                if np.abs(peaks_current[j] - nearest_old_peaks[j])< tol: #If it a coherent peak
+                    count_index = find_tracker(nearest_old_peaks[j]) #Checks if already counting
+                    if count_index != 7: 
+                        counter[count_index,1] +=1 #Add 1 to the location of counter
+                        tracker[count_index,0] = peaks_current[j] #Put in current velocity in the tracker
+                        tracker[count_index,1] = True
+                    
+                    elif count_index == 7: #Creates new counter and start counting
+                        new_space = find_counter_space()
+                        counter[new_space,0] = nearest_old_peaks[j]
+                        #print(counter[new_space,0])
+                        counter[new_space,1] = 2
+                        tracker[new_space,0] = peaks_current[j]
+                        tracker[new_space,1] = True
+                
+                else: #If not a coherent peak do nothing?
+                    pass
+            for jj in range(np.shape(tracker[:,0])[0]): #Check the tracker to find peaks that werent updated
+                if (tracker[jj,1] == False and tracker[jj,0] != 0):
+                    #print("Adding to data")
+                    coherent_velocities.append(counter[jj,0])
+                    coherent_times.append(counter[jj,1])
+                    counter[jj,:] = 0
+                    tracker[jj, 0] = 0
             
-            else: #If not a coherent peak do nothing?
-                pass
-        for jj in range(len(tracker[:,0])): # Someway to reset the counter if stops being coherent
-            if tracker[jj,1] == False:
-                
 
-
-
-                
-        
-        
-        #if len(new_peaks)<1:
-            #new_peaks.append(np.abs(np.asarray(peaks_current) - np.asarray(nearest_old_peaks)).argmax()) #includes new close peaks
-        
+            tracker[:,1] = False
+            
+            #if len(new_peaks)<1:
+                #new_peaks.append(np.abs(np.asarray(peaks_current) - np.asarray(nearest_old_peaks)).argmax()) #includes new close peaks
+            
         peaks_old = peaks_current.copy()
         peaks_current = []
+print(np.mean(coherent_velocities))
+print(np.mean(coherent_times))
+
+plt.scatter(coherent_velocities, coherent_times, s=30)
+plt.xlabel("Streamwise Velocity",fontdict={'family' : 'Calibri', 'size':12})
+plt.ylabel("No. of Subsequent Frames",fontdict={'family' : 'Calibri', 'size':12})
+plt.title(" Temporal Coherence vs. Mean Velocity of UMZ ",fontdict={'family' : 'Calibri', 'size':12})
+plt.show()
