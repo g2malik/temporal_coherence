@@ -29,13 +29,17 @@ middle1 = 0
 middle2 = 0
 freestream = 0
 random = 0
+
 UMZ_order = []
 peaks_old = []
 peaks_current = []
+
+labels = []
 for line in f:
     if (line.startswith("z") or line.startswith("t"))  == True:
         UMZ_order = []
         peaks_old = []
+        label = line
 
     else:
         lst = line.split()
@@ -43,7 +47,7 @@ for line in f:
         std = lst[1]
         for ii in range(2,2+UMZs_str):
             peaks_current.append(float(lst[ii]))
-        UMZ_order.append(UMZs_str)
+        UMZ_order.append(int(UMZs_str))
         new_peaks = []
         nearest_old_peaks = []
         if (len(peaks_current) - len(peaks_old)) == 1 and len(peaks_old)!=0:
@@ -58,16 +62,24 @@ for line in f:
             if len(new_peaks)==1:
                 if new_peaks[0] == 0:
                     wall+=1
-                    #print("wall")
+                    labels.append(label)
+                    labels.append(UMZs_str)
+                    labels.append(std)
+                    
+                    
                 elif new_peaks[0] == (len(peaks_current)-1):
                     freestream+=1
-                    #print("free")
+
+
                 elif new_peaks[0] == 1:
                     middle1+=1
-                    #print("middle")
+
+
                 elif new_peaks[0] == 2:
                     middle2+=1
-                    #print("middle")
+                    
+
+
             else:
                 random+=1
 
@@ -80,3 +92,5 @@ print("# of UMZs created at middle: ",middle1)
 print("# of UMZs created at middle: ",middle2)
 print("# of UMZs created near freastream: ",freestream)
 print(random)
+
+print("frames with creation: ", labels)
