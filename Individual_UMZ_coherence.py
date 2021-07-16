@@ -89,10 +89,10 @@ for line in f:
 
                 if np.abs(peaks_current[j] - nearest_old_peaks[j])< tol: #If it a coherent peak
                     count_index = find_tracker(nearest_old_peaks[j]) #Checks if already counting
-                    if count_index != 7: 
+                    if count_index != 7: #If counter is present
                         counter[count_index,1] +=1 #Add 1 to the location of counter
                         tracker[count_index,0] = peaks_current[j] #Put in current velocity in the tracker
-                        tracker[count_index,1] = True
+                        tracker[count_index,1] = True #Says that the counter was updated
                     
                     elif count_index == 7: #Creates new counter and start counting
                         new_space = find_counter_space()

@@ -23,7 +23,7 @@ def find_nearest(array, value):
 
 fname = r'''C:\Users\gagan\Documents\Work\Results\Temporal Coherence\cumulative_peaks_mean.txt'''
 f = open (fname, mode = 'r')
-tol = 0.02
+tol = 0.025
 wall = 0
 middle1 = 0
 middle2 = 0
@@ -34,7 +34,8 @@ UMZ_order = []
 peaks_old = []
 peaks_current = []
 
-labels = []
+wall_labels = []
+middle1_labels = []
 for line in f:
     if (line.startswith("z") or line.startswith("t"))  == True:
         UMZ_order = []
@@ -62,9 +63,9 @@ for line in f:
             if len(new_peaks)==1:
                 if new_peaks[0] == 0:
                     wall+=1
-                    labels.append(label)
-                    labels.append(UMZs_str)
-                    labels.append(std)
+                    wall_labels.append(label)
+                    wall_labels.append(UMZs_str)
+                    wall_labels.append(std)
                     
                     
                 elif new_peaks[0] == (len(peaks_current)-1):
@@ -73,6 +74,9 @@ for line in f:
 
                 elif new_peaks[0] == 1:
                     middle1+=1
+                    middle1_labels.append(label)
+                    middle1_labels.append(UMZs_str)
+                    middle1_labels.append(std)
 
 
                 elif new_peaks[0] == 2:
@@ -93,4 +97,5 @@ print("# of UMZs created at middle: ",middle2)
 print("# of UMZs created near freastream: ",freestream)
 print(random)
 
-print("frames with creation: ", labels)
+print("frames with wall creation: ", wall_labels)
+print("frames with middle1 creation: ", middle1_labels)
