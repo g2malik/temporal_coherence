@@ -48,6 +48,16 @@ for line in f:
 #print(np.mean(four))
 #print(np.mean(five))
 
+plt.plot([2,3,4,5, 6], [np.mean(two), np.mean(three), np.mean(four), np.mean(five), np.mean(six)])
+plt.xlabel("# of UMZs",fontdict={'family' : 'Calibri', 'size':12})
+plt.xticks([2,3,4,5, 6])
+plt.ylabel("Average # of Subsequent Frames",fontdict={'family' : 'Calibri', 'size':12})
+plt.title(" Temporal Coherence vs. # of UMZ ",fontdict={'family' : 'Calibri', 'size':12})
+plt.show()
+
+print(len(two))
+print(len(three))  
+print(len(four))
 print(most_coherent)
 
 
